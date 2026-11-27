@@ -1,9 +1,3 @@
-"""WaferSense AI - one website. Run:  streamlit run app.py
-
-The whole experience (landing page, live model, explainability, analytics, performance, report) is one page,
-site_template.html. The trained model runs inside that page, so there is no second UI and no redirect.
-Streamlit only hosts it.
-"""
 import json
 import os
 import pathlib
@@ -34,7 +28,7 @@ def site_html():
         data = web.read_text(encoding="utf-8")
     elif (ART / "model.pt").exists():
         try:
-            from export_web import build_webdata  # needs torch; run `python export_web.py` once to skip this
+            from export_web import build_webdata  
             data = json.dumps(build_webdata(str(ART)), separators=(",", ":"))
         except ImportError:
             st.error("artifacts/webdata.json is missing. Run `python export_web.py` once on your computer "
