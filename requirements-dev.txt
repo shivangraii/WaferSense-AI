@@ -1,4 +1,3 @@
-# Only needed on your own computer / Colab: for export_web.py and train.py
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch
 numpy
