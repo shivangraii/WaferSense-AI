@@ -1,4 +1,3 @@
-"""WaferSense AI - shared code: preprocessing, CNN model, Grad-CAM, dataset loader, synthetic data."""
 import glob
 import os
 import pickle
@@ -10,10 +9,6 @@ import torch.nn.functional as F
 CLASSES = ["Center", "Donut", "Edge-Loc", "Edge-Ring", "Loc", "Near-full", "Random", "Scratch", "none"]
 IMG = 64
 
-
-# ----------------------------------------------------------------------------
-# Preprocessing
-# ----------------------------------------------------------------------------
 def preprocess_map(wm, size=IMG):
     """Wafer map (2D, values 0=background, 1=pass die, 2=fail die) -> uint8 (size,size).
     Nearest-neighbour resize so the categorical values never get blended."""
@@ -22,7 +17,6 @@ def preprocess_map(wm, size=IMG):
     ri = np.minimum(((np.arange(size) + 0.5) * h / size).astype(int), h - 1)
     ci = np.minimum(((np.arange(size) + 0.5) * w / size).astype(int), w - 1)
     return a[np.ix_(ri, ci)].astype(np.uint8)
-
 
 def onehot_batch(idx):
     """uint8/long tensor (N,H,W) -> float tensor (N,3,H,W) one-hot (background, pass, fail)."""
