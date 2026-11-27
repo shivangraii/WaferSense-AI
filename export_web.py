@@ -1,22 +1,11 @@
-"""Export the trained WaferSense model, metrics and demo wafers into ONE json that the website runs in the browser.
-
-    python export_web.py                 -> writes artifacts/webdata.json
-    python export_web.py --static        -> also writes index.html (a standalone copy of the whole site)
-
-BatchNorm is folded into the convolutions, so the browser only needs conv + ReLU + pooling + one linear layer.
-Grad-CAM for a global-average-pooling + linear head is exactly  ReLU(sum_k w_ck * A_k), so the site computes
-the same heatmap PyTorch's Grad-CAM does (checked numerically).
-"""
 import base64
 import json
 import os
 import sys
 import numpy as np
 
-
 def _b64(a):
     return base64.b64encode(np.ascontiguousarray(a).tobytes()).decode("ascii")
-
 
 def build_webdata(art="artifacts"):
     import torch
@@ -61,7 +50,6 @@ def inject(template_text, data_json):
     token = "/*__WS_DATA__*/null"
     assert template_text.count(token) == 1, "template placeholder missing"
     return template_text.replace(token, data_json)
-
 
 if __name__ == "__main__":
     art = os.environ.get("WAFER_ARTIFACTS", "artifacts")
