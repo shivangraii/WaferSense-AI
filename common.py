@@ -23,31 +23,22 @@ def onehot_batch(idx):
     idx = torch.as_tensor(idx).long()
     return F.one_hot(idx, 3).permute(0, 3, 1, 2).float()
 
-
-# ----------------------------------------------------------------------------
-# Model
-# ----------------------------------------------------------------------------
 def _block(i, o):
     return nn.Sequential(nn.Conv2d(i, o, 3, padding=1), nn.BatchNorm2d(o), nn.ReLU())
-
 
 class WaferCNN(nn.Module):
     def __init__(self, n_classes=len(CLASSES)):
         super().__init__()
-        self.b1 = nn.Sequential(_block(3, 48), nn.MaxPool2d(2))     # 64 -> 32
-        self.b2 = nn.Sequential(_block(48, 96), nn.MaxPool2d(2))    # 32 -> 16
-        self.b3 = nn.Sequential(_block(96, 192), nn.MaxPool2d(2))   # 16 -> 8
-        self.b4 = _block(192, 192)                                  # Grad-CAM target layer (8x8)
+        self.b1 = nn.Sequential(_block(3, 48), nn.MaxPool2d(2))     
+        self.b2 = nn.Sequential(_block(48, 96), nn.MaxPool2d(2))    
+        self.b3 = nn.Sequential(_block(96, 192), nn.MaxPool2d(2))   
+        self.b4 = _block(192, 192)                                  
         self.head = nn.Sequential(nn.AdaptiveAvgPool2d(1), nn.Flatten(), nn.Dropout(0.3),
                                   nn.Linear(192, n_classes))
 
     def forward(self, x):
         return self.head(self.b4(self.b3(self.b2(self.b1(x)))))
 
-
-# ----------------------------------------------------------------------------
-# Grad-CAM
-# ----------------------------------------------------------------------------
 def gradcam(model, x, class_idx=None):
     """x: (1,3,H,W). Returns (cam HxW in [0,1], probs ndarray, class_idx used)."""
     model.eval()
@@ -75,16 +66,12 @@ def gradcam(model, x, class_idx=None):
     cam = cam / (cam.max() + 1e-8)
     return cam, probs[0].detach().numpy(), class_idx
 
-
-# ----------------------------------------------------------------------------
-# Real dataset loader (WM-811K -> LSWMD.pkl)
-# ----------------------------------------------------------------------------
 def _read_pickle_compat(path):
     """LSWMD.pkl was written with an old pandas; this handles the 'pandas.indexes' error."""
     import pandas as pd
     try:
         return pd.read_pickle(path)
-    except Exception as e:  # noqa
+    except Exception as e:  
         print(f"pd.read_pickle failed ({e}); retrying with compatibility unpickler...")
 
     class U(pickle.Unpickler):
@@ -133,10 +120,6 @@ def load_wm811k(path):
         if "lotName" in df.columns else np.array([""] * len(df))
     return maps, labels[keep].values, lots, summary
 
-
-# ----------------------------------------------------------------------------
-# Synthetic wafer maps (ONLY for smoke-testing the code without the real dataset)
-# ----------------------------------------------------------------------------
 def synth_wafer(cls, rng):
     n = int(rng.integers(30, 52))
     yy, xx = np.mgrid[:n, :n]
