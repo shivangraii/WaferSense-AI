@@ -1,9 +1,3 @@
-"""WaferSense AI - full training + evaluation pipeline.
-
-Real data:   python train.py --data /path/to/wm811k-folder-or-LSWMD.pkl
-Smoke test:  python train.py --synthetic --epochs 3
-Outputs go to ./artifacts (model.pt, metrics.json, samples.npz)
-"""
 import argparse
 import json
 import os
