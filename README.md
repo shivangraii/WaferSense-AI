@@ -2,7 +2,7 @@
 
 **Explainable semiconductor wafer-map defect classification** — a software-only prototype that classifies wafer maps into defect-pattern categories and shows *where* the model looked using Grad-CAM heatmaps.
 
-🌐 **Live demo:** https://wafersense-ai.streamlit.app
+🌐 **Live demo:** https://wafersense.streamlit.app
 
 > Decision-support prototype only. It recognises spatial patterns on labelled wafer maps; it does not inspect physical wafers, diagnose root causes, or certify quality.
 
